@@ -67,7 +67,7 @@ const Column = () => {
         <h2 className="text-xl font-bold mb-4">Tasks</h2>
         <div className="grid grid-cols-1 gap-4">
           {todos.map(todo => (
-            <Card key={todo.id} task={todo} />
+            <Card key={todo._id} task={todo} />
           ))}
         </div>
       </div>
