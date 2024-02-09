@@ -7,12 +7,11 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id] : e.target.value });
+    console.log(formData); 
   }
-
-  console.log(formData); 
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -25,6 +24,7 @@ const SignUp = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        credentials: 'include'
       });
   
       const data = await res.json();
@@ -33,7 +33,7 @@ const SignUp = () => {
         setError(true);
         return;
       }
-      navigate('/signin');
+      navigate('/');
     } catch (error) {
       setLoading(false);
       setError(true);
@@ -72,8 +72,8 @@ const SignUp = () => {
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Have an account?</p>
-        <Link to = "/signin">
-          <span className='text-blue-500'>Sign In</span>
+        <Link to = "/">
+          <span className='text-red-700'>Sign In</span>
         </Link>
       </div>
       <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>

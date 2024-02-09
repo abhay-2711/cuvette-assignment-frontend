@@ -12,9 +12,8 @@ const SignIn = () => {
   
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id] : e.target.value });
+    console.log(formData); 
   }
-
-  console.log(formData); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +25,9 @@ const SignIn = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        credentials: 'include'
       });
+      // console.log(res);
   
       const data = await res.json();
       if(data.success === false){
@@ -34,7 +35,7 @@ const SignIn = () => {
         return;
       }
       dispatch(signInSuccess(data));
-      navigate('/');
+      navigate('/todo');
     } catch (error) {
       console.log(error);
       dispatch(signInFailure(error));
@@ -74,7 +75,7 @@ const SignIn = () => {
       <div className='flex gap-2 mt-5'>
         <p>Don&apos;t have an account?</p>
         <Link to = "/signup">
-          <span className='text-blue-500'>Sign Up</span>
+          <span className='text-red-700'>Sign Up</span>
         </Link>
       </div>
       <p className='text-red-700 mt-5'>{error ? error.message || 'Something went wrong!' : ''}</p>
