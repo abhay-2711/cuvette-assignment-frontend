@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { addTodoStart, addTodoSuccess, addTodoFailure } from '../../redux/todo/todoSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import Card from '../Card/Card';
 
 const Column = () => {
 
     const [formData, setFormData] = useState({});
-    const { loading } = useSelector((state) => state.todo);
+    const { loading, todos } = useSelector((state) => state.todo);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
@@ -61,6 +62,15 @@ const Column = () => {
       </div>
         <button disabled={loading} style={{backgroundColor:"#0E2E50"}} className='text-white p-3 rounded-lg uppercase hover:opacity-80'>{loading ? 'Loading...' : 'Create'}</button>
       </form>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Tasks</h2>
+        <div className="grid grid-cols-1 gap-4">
+          {todos.map(todo => (
+            <Card key={todo.id} task={todo} />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
