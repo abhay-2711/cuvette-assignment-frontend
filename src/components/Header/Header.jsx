@@ -20,7 +20,7 @@ const Header = () => {
       const data = await res.json();
       console.log(data);
       if(data === 'Signout success!'){
-        dispatch(signOut());
+        await dispatch(signOut());
         navigate('/');
       }
     } catch (error) {
