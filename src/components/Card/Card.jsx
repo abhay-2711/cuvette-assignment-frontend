@@ -9,26 +9,26 @@ const Card = ({ task }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleDelete = () => {
+    const handleDelete = async (e) => {
+      e.preventDefault();
+      try {
         dispatch(deleteTodoStart());
-        fetch(`${process.env.REACT_APP_API_URL}/api/note/deleteNote/${task._id}`, {
-            method: 'DELETE',
-            credentials: 'include',
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success === false){
-                dispatch(deleteTodoFailure(data));
-                return;
-            }
-            dispatch(deleteTodoSuccess(task._id));
-            navigate('/todo');
-        })
-        .catch(error => {
-            console.log(error);
-            dispatch(deleteTodoFailure(error));
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/note/deleteNote/${task._id}`, {
+          method: 'DELETE',
+          credentials: 'include'
         });
-    }
+        const data = await res.json();
+        if(data.message === 'Note not found'){
+          dispatch(deleteTodoFailure(data));
+          return;
+        }
+        dispatch(deleteTodoSuccess(task._id));
+        navigate('/todo');
+      } catch (error) {
+        console.log(error);
+        dispatch(deleteTodoFailure(error));
+      }
+    }      
 
   return (
     <div className='flex bg-white shadow-md rounded-md p-4 justify-between'>

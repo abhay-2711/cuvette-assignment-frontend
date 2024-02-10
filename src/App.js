@@ -10,7 +10,7 @@ import { Navigate } from 'react-router';
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
-
+  
   const isAuthenticated = () => {
     if(currentUser){
       return true;
@@ -18,13 +18,9 @@ function App() {
     return false;
   };
   
-  const ProtectedRoute = ({ element, ...rest }) => {
-    if (!isAuthenticated()) {
-      return <Navigate to="/" replace />;
-    }
-  
-    return React.cloneElement(element, rest);
-  };
+  const ProtectedRoute = ({ element }) => {
+    return isAuthenticated() ? element : <Navigate to='/' />;
+  }
 
   return (
     <div>

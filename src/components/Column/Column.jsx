@@ -1,21 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { addTodoStart, addTodoSuccess, addTodoFailure } from '../../redux/todo/todoSlice';
+import { getTodosStart, getTodosSuccess, getTodosFailure } from '../../redux/todo/todoSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Card from '../Card/Card';
 
 const Column = () => {
-
-    const [formData, setFormData] = useState({});
     const { loading, todos } = useSelector((state) => state.todo);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    const handleChange = (e) => {
-      setFormData({ ...formData, [e.target.id] : e.target.value });
-      console.log(formData); 
-    }
-    
+    const [title, setTitle] = useState('');
+
+    useEffect(() => {
+      const fetchTodos = async () => {
+          try {
+              dispatch(getTodosStart());
+              const res = await fetch(`${process.env.REACT_APP_API_URL}/api/note/getAllNotes`, {
+                  method: 'GET',
+                  credentials: 'include'
+              });
+              const data = await res.json();
+              dispatch(getTodosSuccess(data));
+          } catch (error) {
+              dispatch(getTodosFailure(error));
+          }
+      };
+
+      fetchTodos();
+  }, [dispatch]);
+  
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
@@ -23,19 +36,18 @@ const Column = () => {
         const res = await fetch(`${process.env.REACT_APP_API_URL}/api/note/createNote`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(formData),
           credentials: 'include',
+          body: JSON.stringify({title})
         });
-    
         const data = await res.json();
-        if(data.success === false){
+        if(data._id === undefined){
           dispatch(addTodoFailure(data));
           return;
         }
         dispatch(addTodoSuccess(data));
-        formData.title = '';
+        setTitle('');
         navigate('/todo');
       } catch (error) {
         console.log(error);
@@ -56,8 +68,9 @@ const Column = () => {
         <input 
           type='text' 
           id='title' 
+          value={title}
           className='bg-slate-100 p-3 rounded-lg' 
-          onChange = {handleChange}
+          onChange = {e => setTitle((e.target.value))}
         />
       </div>
         <button disabled={loading} style={{backgroundColor:"#0E2E50"}} className='text-white p-3 rounded-lg uppercase hover:opacity-80'>{loading ? 'Loading...' : 'Create'}</button>
